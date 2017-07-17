@@ -1,6 +1,6 @@
 import pandas as pd
 from pandas import DataFrame
-from pandas import ExcelWriter
+
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -31,8 +31,6 @@ for i in df['FIN.TRANSACTION AMOUNT']:
     Transaction_Amount.append(float(i))
 
 
-
-
 #initiate Account Number list and append 'Account Number' from worksheet to list
 Account_Number = []
 for i in df['ACC.ACCOUNT NUMBER']:
@@ -41,17 +39,20 @@ for i in df['ACC.ACCOUNT NUMBER']:
     Account_Number.append(tempAccountNumber)
     
 
+#merge Transaction Amount, Account Name and Account Number to a list
 list2 = []
 for k, v, h in zip(Transaction_Amount, Account_Name, Account_Number):
     list2.append(str(k) + '|' + str(v) + '|' + str(h))
 
 list3 = []
 counter = []
-HelperValue = []
+
 for i in list2:
     list3.append(i)
     counter.append(list3.count(i))
 
+##Helper Value is a join of Transaction Amount, Account Number, Account Name, and Counter
+HelperValue = []
 for k, v in zip(list3, counter):
     HelperValue.append(str(k) + '|' + str(v))
 
