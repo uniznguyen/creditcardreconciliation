@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from pandas import DataFrame
 
 import sys
@@ -7,7 +8,7 @@ sys.setdefaultencoding('utf-8')
 
 CreditCardStatementPath = 'CreditCardStatement.xlsx'
 QuickbooksExcelPath = 'Quickbooks.xlsx'
-OutputExcelPath = 'Reconciliation2.xlsx'
+OutputExcelPath = 'Reconciliation.xlsx'
 
 ## slice the string, take number of chars from the right
 def right(text, num_chars):
@@ -19,6 +20,7 @@ def left(text, num_chars):
 
 ## open Excel file from bank statement, create dataframe from worksheet
 df = pd.read_excel(CreditCardStatementPath, header=0)
+#df = df.sort_values(by = ['FIN.TRANSACTION AMOUNT','FIN.POSTING DATE'],ascending = [True,True])
 
 #initiate Account Name list and append 'Account Name' from worksheet to list
 Account_Name = []
@@ -61,12 +63,17 @@ for k, v in zip(list3, counter):
 
 ## open Excel file from Quickbooks, create dataframe from worksheet
 df2 = pd.read_excel(QuickbooksExcelPath,header=0)
+#df2 = df2.sort_values(by = ['Credit','Date'],ascending = [True,True])
 
+## replace null value in Credit and Debit columns by 0.00
+df2['Debit'] = df2['Debit'].replace(np.nan,0)
+df2['Credit'] = df2['Credit'].replace(np.nan,0)
 
-#initiate Account Name list and append 'Credit' from worksheet to list
+#initiate Transaction_Amount2 list and append 'Credit' from worksheet to list
 Transaction_Amount2 = []
-for i in df2['Credit']:
-    Transaction_Amount2.append(float(i))
+
+for i, j in zip(df2['Credit'],df2['Debit']):
+    Transaction_Amount2.append(float(i) - float(j))
 
 
 #initiate Account Name list and append 'Account' from worksheet to list
@@ -121,12 +128,12 @@ for i in HelperValue2:
 writer = pd.ExcelWriter(OutputExcelPath,engine='xlsxwriter')
 
 df = DataFrame(list(zip(Account_Name, Transaction_Amount, Account_Number, counter, HelperValue,Match_BankStatement)), columns=['Account_Name', 'Transaction_Amount', 'Account_Number', 'Counter', 'Helper','Match'])
-df = df.sort_values(by = ['Transaction_Amount'],ascending = True)
+#df = df.sort_values(by = ['Transaction_Amount','Helper'],ascending = [True, True])
 df.to_excel(writer,sheet_name='Sheet1',startcol=0,startrow=0,index=False,header=True,engine='xlsxwriter')
 
 
 df2 = DataFrame(list(zip(Account_Name2, Transaction_Amount2, Account_Number2, counter2, HelperValue2,Match_Quickbooks)), columns=['Account_Name', 'Transaction_Amount', 'Account_Number', 'Counter', 'Helper','Match'])
-df2 = df2.sort_values(by=['Transaction_Amount'],ascending = True)
+#df2 = df2.sort_values(by=['Transaction_Amount','Helper'],ascending = [True,True])
 df2.to_excel(writer,sheet_name='Sheet1',startcol=10,startrow=0,index=False,header=True,engine='xlsxwriter')
 
 writer.save()
