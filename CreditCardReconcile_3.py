@@ -7,7 +7,7 @@ import sys
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
-#test commit git
+
 
 CreditCardStatementPath = 'CreditCardStatement.xlsx'
 OutputExcelPath = 'Reconciliation.xlsx'
