@@ -2,15 +2,16 @@ import pandas as pd
 import numpy as np
 from pandas import DataFrame
 import pyodbc
-
+import os
 import sys
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
 #test branch
 
-CreditCardStatementPath = 'CreditCardStatement.xlsx'
-OutputExcelPath = 'Reconciliation.xlsx'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CreditCardStatementPath = os.path.join(BASE_DIR,'CreditCardStatement.xlsx')
+OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 
 #DateFrom and DateTo paramters for the query
