@@ -45,7 +45,6 @@ df2['Combine']= df2['Transaction_Amount'].astype(str)+ '|' + \
                 df2['Account'].str[8:-4].str.strip().str.upper() + '|' + \
                 df2['Account'].str[-4:].str.strip()
 
-
 list3 = []
 counter2 = []
 
@@ -62,7 +61,6 @@ df2['Combine'] = df2['Combine'] + '|' + df2['Counter'].astype(str)
 df = pd.read_excel(CreditCardStatementPath, header=0)
 
 #drop unneccessary columns
-#df = df.drop(df.columns[[0,1,2,3,4,5]],axis = 1)
 df = df.drop(df.columns[[0,2,4,5]],axis = 1)
 
 #rename some columns
