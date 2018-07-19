@@ -7,7 +7,7 @@ import sys
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
-
+#test commit
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CreditCardStatementPath = os.path.join(BASE_DIR,'CreditCardStatement.xlsx')
