@@ -68,6 +68,8 @@ df = df.drop(df.columns[[0,2,3,4,5]],axis = 1)
 #rename some columns
 df.rename(columns ={'FIN.PRIMARY TRANSACTION AMOUNT':'Transaction Amount','ACC.ACCOUNT NAME':'AcctName','ACC.ACCOUNT NUMBER':'AcctNumber','FIN.TRANSACTION DATE':'Date'}, inplace = True)
 
+df['Is_Business_Day']= [np.is_busday(x) for x in pd.to_datetime(df['Date'])]
+
 #sort the dataframe by Transaction Amount
 df = df.sort_values(['Date','Transaction Amount'],ascending=[True,True])
 
