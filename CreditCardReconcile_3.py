@@ -16,7 +16,7 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 #DateFrom and DateTo paramters for the query
 DateFrom = "{d'2018-01-01'}"
-DateTo = "{d'2018-05-31'}"
+DateTo = "{d'2018-07-31'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
@@ -103,7 +103,7 @@ df2['Matched'] = df2['Combine'].isin(df['Combine'])
 
 writer = pd.ExcelWriter(OutputExcelPath,engine='xlsxwriter')
 df.to_excel(writer,sheet_name='Sheet1',startcol=0,startrow=0,index=False,header=True,engine='xlsxwriter')
-df2.to_excel(writer,sheet_name='Sheet1',startcol=10,startrow=0,index=False,header=True,engine='xlsxwriter')
+df2.to_excel(writer,sheet_name='Sheet1',startcol=15,startrow=0,index=False,header=True,engine='xlsxwriter')
 
 writer.save()
 
