@@ -27,10 +27,8 @@ parameters DateFrom ="""+DateFrom+""", DateTo = """+DateTo+""", SummarizeRowsBy 
 where RowType = 'DataRow' and AccountFullName Like '%BBVA Credit Card%' and ClearedStatus <> 'Cleared'
 ORDER BY Credit ASC"""
 
-data = pd.read_sql(sql,cn)
-
 #load data to DataFrame2
-df2 = pd.DataFrame(data)
+df2 = pd.read_sql(sql,cn)
 
 
 df2['Debit'] = df2['Debit'].replace(np.nan,0)
@@ -69,6 +67,7 @@ df.rename(columns ={'FIN.PRIMARY TRANSACTION AMOUNT':'Transaction Amount','ACC.A
 #check if the transaction day is a businessday or not
 df['Date'] = pd.to_datetime(df['Date'])
 df['Is_Business_Day']= [np.is_busday(x) for x in df['Date'].astype(str)]
+
 
 #sort the dataframe by Transaction Amount
 df = df.sort_values(['Date','Transaction Amount'],ascending=[True,True])
