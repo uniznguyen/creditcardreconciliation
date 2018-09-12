@@ -16,7 +16,7 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 #DateFrom and DateTo paramters for the query
 DateFrom = "{d'2018-01-01'}"
-DateTo = "{d'2018-07-31'}"
+DateTo = "{d'2018-08-31'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
@@ -37,7 +37,7 @@ df2['Credit'] = df2['Credit'].replace(np.nan,0)
 df2['Transaction_Amount'] = df2['Credit'] - df2['Debit']
 df2.drop(['ClearedStatus','Debit','Credit',], axis=1,inplace=True)
 
-df2 = df2.sort_values(['Date','Transaction_Amount'],ascending=[True,True])
+df2 = df2.sort_values(['Transaction_Amount','Date'],ascending=[True,True])
 
 df2['Combine']= df2['Transaction_Amount'].astype(str)+ '|' + \
                 df2['Account'].str[8:-4].str.strip().str.upper() + '|' + \
@@ -70,7 +70,7 @@ df['Is_Business_Day']= [np.is_busday(x) for x in df['Date'].astype(str)]
 
 
 #sort the dataframe by Transaction Amount
-df = df.sort_values(['Date','Transaction Amount'],ascending=[True,True])
+df = df.sort_values(['Transaction Amount','Date'],ascending=[True,True])
 
 #Upper case the account name column, remove white space
 df['AcctName'] = df['AcctName'].str.upper().str.strip()
