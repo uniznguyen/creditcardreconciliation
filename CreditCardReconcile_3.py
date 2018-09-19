@@ -105,6 +105,11 @@ writer = pd.ExcelWriter(OutputExcelPath,engine='xlsxwriter')
 df.to_excel(writer,sheet_name='Sheet1',startcol=0,startrow=0,index=False,header=True,engine='xlsxwriter')
 df2.to_excel(writer,sheet_name='Sheet1',startcol=15,startrow=0,index=False,header=True,engine='xlsxwriter')
 
+#save two dataframe to excel files
 writer.save()
 
+#close connection to Quickbooks
 cn.close()
+
+#automatically open the Reconciliation.xls from Excel
+os.startfile(OutputExcelPath)
