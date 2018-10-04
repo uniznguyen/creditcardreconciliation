@@ -111,5 +111,5 @@ writer.save()
 #close connection to Quickbooks
 cn.close()
 
-#automatically open the Reconciliation.xls from Exce
+#automatically open the Reconciliation.xls from Excel
 os.startfile(OutputExcelPath)
