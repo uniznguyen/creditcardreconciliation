@@ -16,7 +16,7 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 #DateFrom and DateTo paramters for the query
 DateFrom = "{d'2018-01-01'}"
-DateTo = "{d'2018-08-31'}"
+DateTo = "{d'2018-09-30'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
@@ -111,5 +111,5 @@ writer.save()
 #close connection to Quickbooks
 cn.close()
 
-#automatically open the Reconciliation.xls from Excel
+#automatically open the Reconciliation.xls from Exce
 os.startfile(OutputExcelPath)
