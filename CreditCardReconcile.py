@@ -15,14 +15,14 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 
 #DateFrom and DateTo paramters for the query
-DateFrom = "{d'2018-01-01'}"
-DateTo = "{d'2018-12-31'}"
+DateFrom = "{d'2019-01-01'}"
+DateTo = "{d'2019-07-31'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
 cn = pyodbc.connect('DSN=QuickBooks Data;')
 
-sql = """sp_report CustomTxnDetail show Date, Account, ClearedStatus, Debit, Credit
+sql = """sp_report CustomTxnDetail show Date, RefNumber, Account, ClearedStatus, Debit, Credit
 parameters DateFrom ="""+DateFrom+""", DateTo = """+DateTo+""", SummarizeRowsBy = 'TotalOnly', AccountFilterType = 'CreditCard'
 where RowType = 'DataRow' and AccountFullName Like '%BBVA Credit Card%' and ClearedStatus <> 'Cleared'
 ORDER BY Credit ASC"""
@@ -104,6 +104,10 @@ df2['Matched'] = df2['Combine'].isin(df['Combine'])
 writer = pd.ExcelWriter(OutputExcelPath,engine='xlsxwriter')
 df.to_excel(writer,sheet_name='Sheet1',startcol=0,startrow=0,index=False,header=True,engine='xlsxwriter')
 df2.to_excel(writer,sheet_name='Sheet1',startcol=15,startrow=0,index=False,header=True,engine='xlsxwriter')
+numberformat = writer.book.add_format({'num_format': '#,##0.00'})
+writer.sheets['Sheet1'].set_column('C:C', None, numberformat)
+writer.sheets['Sheet1'].set_column('R:R', None, numberformat)
+writer.sheets['Sheet1'].autofilter('B1:V1')
 
 #save two dataframe to excel files
 writer.save()
