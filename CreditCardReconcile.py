@@ -16,7 +16,7 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 #DateFrom and DateTo paramters for the query
 DateFrom = "{d'2019-01-01'}"
-DateTo = "{d'2019-07-31'}"
+DateTo = "{d'2019-08-31'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
@@ -107,7 +107,7 @@ df2.to_excel(writer,sheet_name='Sheet1',startcol=15,startrow=0,index=False,heade
 numberformat = writer.book.add_format({'num_format': '#,##0.00'})
 writer.sheets['Sheet1'].set_column('C:C', None, numberformat)
 writer.sheets['Sheet1'].set_column('R:R', None, numberformat)
-writer.sheets['Sheet1'].autofilter('B1:V1')
+writer.sheets['Sheet1'].autofilter('B1:V2000')
 
 #save two dataframe to excel files
 writer.save()
