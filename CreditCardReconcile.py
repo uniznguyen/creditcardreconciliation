@@ -15,21 +15,22 @@ OutputExcelPath = os.path.join(BASE_DIR,'Reconciliation.xlsx')
 
 
 #DateFrom and DateTo paramters for the query
-DateFrom = "{d'2019-01-01'}"
-DateTo = "{d'2019-08-31'}"
+DateFrom = "{d'2022-01-01'}"
+DateTo = "{d'2022-09-30'}"
 
 
 # open ODBC connection to Quickbooks and run sp_report to query UnCleared Credit Card Transaction
 cn = pyodbc.connect('DSN=QuickBooks Data;')
 
-sql = """sp_report CustomTxnDetail show Date, RefNumber, Account, ClearedStatus, Debit, Credit
-parameters DateFrom ="""+DateFrom+""", DateTo = """+DateTo+""", SummarizeRowsBy = 'TotalOnly', AccountFilterType = 'CreditCard'
-where RowType = 'DataRow' and AccountFullName Like '%BBVA Credit Card%' and ClearedStatus <> 'Cleared'
+sql = f"""sp_report CustomTxnDetail show Date, RefNumber, Account, ClearedStatus, Debit, Credit
+parameters DateFrom ={DateFrom}, DateTo = {DateTo}, SummarizeRowsBy = 'TotalOnly', AccountFilterType = 'CreditCard'
+where RowType = 'DataRow' and AccountFullName Like '%PNC Credit Card (BBVA)%' and ClearedStatus <> 'Cleared'
 ORDER BY Credit ASC"""
 
 #load data to DataFrame2
 df2 = pd.read_sql(sql,cn)
 
+print (sql)
 
 df2['Debit'] = df2['Debit'].replace(np.nan,0)
 df2['Credit'] = df2['Credit'].replace(np.nan,0)
@@ -43,14 +44,7 @@ df2['Combine']= df2['Transaction_Amount'].astype(str)+ '|' + \
                 df2['Account'].str[8:-4].str.strip().str.upper() + '|' + \
                 df2['Account'].str[-4:].str.strip()
 
-list3 = []
-counter2 = []
-
-for index, row in df2.iterrows():
-    list3.append(row['Combine'])
-    counter2.append(list3.count(row['Combine']))
-
-df2['Counter'] = counter2
+df2['Counter'] = df2.groupby(['Combine']).cumcount().add(1)
 df2['Combine'] = df2['Combine'] + '|' + df2['Counter'].astype(str)
 
 
@@ -67,6 +61,7 @@ df.rename(columns ={'FIN.PRIMARY TRANSACTION AMOUNT':'Transaction Amount','ACC.A
 #check if the transaction day is a businessday or not
 df['Date'] = pd.to_datetime(df['Date'])
 df['Is_Business_Day']= [np.is_busday(x) for x in df['Date'].astype(str)]
+df['Date'] = df['Date'].dt.date
 
 
 #sort the dataframe by Transaction Amount
@@ -84,14 +79,7 @@ df['Combine'] = df['Transaction Amount'].astype(str) + '|' \
 df['AcctNumber'] = df['AcctNumber'].str[-4:]
 
 
-list3 = []
-counter = []
-
-for index, row in df.iterrows():
-    list3.append(row['Combine'])
-    counter.append(list3.count(row['Combine']))
-
-df['Counter'] = counter
+df['Counter'] = df.groupby(['Combine']).cumcount().add(1)
 df['Combine'] = df['Combine'] + '|' + df['Counter'].astype(str)
 
 #match the "Combine" values in 2 dataframe, return true if match, false if not match
@@ -107,7 +95,7 @@ df2.to_excel(writer,sheet_name='Sheet1',startcol=15,startrow=0,index=False,heade
 numberformat = writer.book.add_format({'num_format': '#,##0.00'})
 writer.sheets['Sheet1'].set_column('C:C', None, numberformat)
 writer.sheets['Sheet1'].set_column('R:R', None, numberformat)
-writer.sheets['Sheet1'].autofilter('B1:V2000')
+writer.sheets['Sheet1'].autofilter('A1:V20000')
 
 #save two dataframe to excel files
 writer.save()
